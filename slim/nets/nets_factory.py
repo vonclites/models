@@ -29,6 +29,7 @@ from nets import overfeat
 from nets import resnet_v1
 from nets import resnet_v2
 from nets import vgg
+from nets import iris
 
 slim = tf.contrib.slim
 
@@ -52,6 +53,7 @@ networks_map = {'alexnet_v2': alexnet.alexnet_v2,
                 'resnet_v2_101': resnet_v2.resnet_v2_101,
                 'resnet_v2_152': resnet_v2.resnet_v2_152,
                 'resnet_v2_200': resnet_v2.resnet_v2_200,
+                'vgg_iris': iris.vgg,
                }
 
 arg_scopes_map = {'alexnet_v2': alexnet.alexnet_v2_arg_scope,
@@ -75,6 +77,7 @@ arg_scopes_map = {'alexnet_v2': alexnet.alexnet_v2_arg_scope,
                   'resnet_v2_101': resnet_v2.resnet_arg_scope,
                   'resnet_v2_152': resnet_v2.resnet_arg_scope,
                   'resnet_v2_200': resnet_v2.resnet_arg_scope,
+                  'vgg_iris': vgg.vgg_arg_scope,
                  }
 
 
