@@ -58,3 +58,4 @@ def vgg(inputs,
         net = tf.squeeze(net, [1, 2], name='fc8/squeezed')
         end_points[sc.name + '/fc8'] = net
       return net, end_points
+vgg.default_image_size = None
