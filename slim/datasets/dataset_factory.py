@@ -23,13 +23,15 @@ from datasets import cifar100
 from datasets import flowers
 from datasets import imagenet
 from datasets import mnist
+from datasets import iris_norm
 
 datasets_map = {
     'cifar10': cifar10,
-    'cifar100':cifar100,
+    'cifar100': cifar100,
     'flowers': flowers,
     'imagenet': imagenet,
     'mnist': mnist,
+    'iris_norm': iris_norm,
 }
 
 
