@@ -11,12 +11,12 @@ slim = tf.contrib.slim
 
 _FILE_PATTERN = 'iris_%s.tfrecord'
 
-SPLITS_TO_SIZES = {'train': 15999, 'test': 4000}
+SPLITS_TO_SIZES = {'train': 17000, 'test': 3000}
 
 _NUM_CLASSES = 2
 
 _ITEMS_TO_DESCRIPTIONS = {
-    'image': 'A grayscale iris image.',
+    'image': 'NIR ocular image.',
     'label': '1 for fake iris or 0 for real iris.',
 }
 
@@ -41,7 +41,7 @@ def get_split(split_name, dataset_dir, file_pattern=None, reader=None):
     }
 
     items_to_handlers = {
-        'image': slim.tfexample_decoder.Image(shape=[32, 256, 1], channels=1),
+        'image': slim.tfexample_decoder.Image(shape=[640, 640, 1], channels=1),
         'label': slim.tfexample_decoder.Tensor('image/class/label'),
         'filepath': slim.tfexample_decoder.Tensor('image/filepath'),
     }
