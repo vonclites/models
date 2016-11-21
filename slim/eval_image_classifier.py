@@ -28,7 +28,7 @@ from preprocessing import preprocessing_factory
 slim = tf.contrib.slim
 
 tf.app.flags.DEFINE_integer(
-    'batch_size', 100, 'The number of samples in each batch.')
+    'batch_size', 64, 'The number of samples in each batch.')
 
 tf.app.flags.DEFINE_integer(
     'max_num_batches', None,
@@ -39,11 +39,14 @@ tf.app.flags.DEFINE_string(
 
 tf.app.flags.DEFINE_string(
     'checkpoint_path', '/tmp/tfmodel/',
-    'The directory where the model was written to or an absolute path to a '
-    'checkpoint file.')
+    'The directory where the model was written.')
 
 tf.app.flags.DEFINE_string(
     'eval_dir', '/tmp/tfmodel/', 'Directory where the results are saved to.')
+
+tf.app.flags.DEFINE_integer(
+    'eval_interval_secs', 60*2,
+    'The frequency with which the model is evaluated, in seconds.')
 
 tf.app.flags.DEFINE_integer(
     'num_preprocessing_threads', 4,
@@ -147,11 +150,15 @@ def main(_):
     else:
       variables_to_restore = slim.get_variables_to_restore()
 
+    one_hot_labels = slim.one_hot_encoding(labels, 2)
+    loss = slim.losses.softmax_cross_entropy(logits, one_hot_labels)
+
     predictions = tf.argmax(logits, 1)
     labels = tf.squeeze(labels)
 
     # Define the metrics:
     names_to_values, names_to_updates = slim.metrics.aggregate_metric_map({
+        'Total_Loss': slim.metrics.streaming_mean(loss),
         'Accuracy': slim.metrics.streaming_accuracy(predictions, labels),
         'Recall@5': slim.metrics.streaming_recall_at_k(
             logits, labels, 5),
@@ -172,20 +179,21 @@ def main(_):
       # This ensures that we make a single pass over all of the data.
       num_batches = math.ceil(dataset.num_samples / float(FLAGS.batch_size))
 
-    if tf.gfile.IsDirectory(FLAGS.checkpoint_path):
-      checkpoint_path = tf.train.latest_checkpoint(FLAGS.checkpoint_path)
-    else:
-      checkpoint_path = FLAGS.checkpoint_path
+#    if tf.gfile.IsDirectory(FLAGS.checkpoint_path):
+#      checkpoint_path = tf.train.latest_checkpoint(FLAGS.checkpoint_path)
+#    else:
+#      checkpoint_path = FLAGS.checkpoint_path
 
-    tf.logging.info('Evaluating %s' % checkpoint_path)
+    tf.logging.info('Evaluating %s' % FLAGS.checkpoint_path)
 
-    slim.evaluation.evaluate_once(
+    slim.evaluation.evaluation_loop(
         master=FLAGS.master,
-        checkpoint_path=checkpoint_path,
+        checkpoint_dir=FLAGS.checkpoint_path,
         logdir=FLAGS.eval_dir,
         num_evals=num_batches,
         eval_op=list(names_to_updates.values()),
-        variables_to_restore=variables_to_restore)
+        eval_interval_secs=FLAGS.eval_interval_secs,
+        variables_to_restore=slim.get_variables_to_restore())
 
 
 if __name__ == '__main__':

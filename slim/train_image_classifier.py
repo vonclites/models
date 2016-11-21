@@ -53,7 +53,7 @@ tf.app.flags.DEFINE_integer(
     'The number of parallel readers that read data from the dataset.')
 
 tf.app.flags.DEFINE_integer(
-    'num_preprocessing_threads', 4,
+    'num_preprocessing_threads', 8,
     'The number of threads used to create the batches.')
 
 tf.app.flags.DEFINE_integer(
@@ -61,11 +61,11 @@ tf.app.flags.DEFINE_integer(
     'The frequency with which logs are print.')
 
 tf.app.flags.DEFINE_integer(
-    'save_summaries_secs', 600,
+    'save_summaries_secs', 60*4,
     'The frequency with which summaries are saved, in seconds.')
 
 tf.app.flags.DEFINE_integer(
-    'save_interval_secs', 600,
+    'save_interval_secs', 60*4,
     'The frequency with which the model is saved, in seconds.')
 
 tf.app.flags.DEFINE_integer(
@@ -476,11 +476,10 @@ def main(_):
           logits, labels, label_smoothing=FLAGS.label_smoothing, weight=1.0)
       predictions = tf.argmax(logits, 1)
       labels = tf.argmax(labels, 1)
-      accuracy, update_op = slim.metrics.streaming_accuracy(
+      slim.metrics.streaming_accuracy(
            predictions,
            labels,
-           metrics_collections=['accuracy'],
-           updates_collections=tf.GraphKeys.UPDATE_OPS)
+           metrics_collections=['accuracy'])
       return end_points
 
     # Gather initial summaries.
@@ -549,9 +548,12 @@ def main(_):
         clones,
         optimizer,
         var_list=variables_to_train)
-    # Add total_loss to summary.
-    summaries.add(tf.scalar_summary('total_loss', total_loss,
+    # Add total_loss and accuacy to summary.
+    summaries.add(tf.scalar_summary('eval/Total_Loss', total_loss,
                                     name='total_loss'))
+    accuracy = tf.get_collection('accuracy', first_clone_scope)[0]
+    summaries.add(tf.scalar_summary('eval/Accuracy', accuracy,
+                                    name='accuracy'))
 
     # Create gradient updates.
     grad_updates = optimizer.apply_gradients(clones_gradients,
