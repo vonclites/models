@@ -158,7 +158,8 @@ def main(_):
     })
 
     # Print the summaries to screen.
-    for name, value in names_to_values.iteritems():
+    # TODO(vonclites) list(d.items()) is for Python 3... check compatibility
+    for name, value in list(names_to_values.items()):
       summary_name = 'eval/%s' % name
       op = tf.scalar_summary(summary_name, value, collections=[])
       op = tf.Print(op, [value], summary_name)
@@ -183,7 +184,7 @@ def main(_):
         checkpoint_path=checkpoint_path,
         logdir=FLAGS.eval_dir,
         num_evals=num_batches,
-        eval_op=names_to_updates.values(),
+        eval_op=list(names_to_updates.values()),
         variables_to_restore=variables_to_restore)
 
 

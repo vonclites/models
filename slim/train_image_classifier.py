@@ -474,6 +474,13 @@ def main(_):
             label_smoothing=FLAGS.label_smoothing, weight=0.4, scope='aux_loss')
       slim.losses.softmax_cross_entropy(
           logits, labels, label_smoothing=FLAGS.label_smoothing, weight=1.0)
+      predictions = tf.argmax(logits, 1)
+      labels = tf.argmax(labels, 1)
+      accuracy, update_op = slim.metrics.streaming_accuracy(
+           predictions,
+           labels,
+           metrics_collections=['accuracy'],
+           updates_collections=tf.GraphKeys.UPDATE_OPS)
       return end_points
 
     # Gather initial summaries.
