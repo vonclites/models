@@ -41,7 +41,7 @@ def get_split(split_name, dataset_dir, file_pattern=None, reader=None):
     }
 
     items_to_handlers = {
-        'image': slim.tfexample_decoder.Image(shape=[32, 256, 1], channels=1),
+        'image': slim.tfexample_decoder.Image(shape=[64, 512, 1], channels=1),
         'label': slim.tfexample_decoder.Tensor('image/class/label'),
         'filepath': slim.tfexample_decoder.Tensor('image/filepath'),
     }

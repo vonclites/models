@@ -6,8 +6,8 @@ import tensorflow as tf
 
 slim = tf.contrib.slim
 
-_IMAGE_HEIGHT = 32
-_IMAGE_WIDTH = 256
+_IMAGE_HEIGHT = 64
+_IMAGE_WIDTH = 512
 
 
 def preprocess_for_train(image, output_height, output_width):
