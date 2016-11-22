@@ -61,11 +61,11 @@ tf.app.flags.DEFINE_integer(
     'The frequency with which logs are print.')
 
 tf.app.flags.DEFINE_integer(
-    'save_summaries_secs', 60*4,
+    'save_summaries_secs', 60*10,
     'The frequency with which summaries are saved, in seconds.')
 
 tf.app.flags.DEFINE_integer(
-    'save_interval_secs', 60*4,
+    'save_interval_secs', 60*10,
     'The frequency with which the model is saved, in seconds.')
 
 tf.app.flags.DEFINE_integer(

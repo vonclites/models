@@ -45,7 +45,7 @@ tf.app.flags.DEFINE_string(
     'eval_dir', '/tmp/tfmodel/', 'Directory where the results are saved to.')
 
 tf.app.flags.DEFINE_integer(
-    'eval_interval_secs', 60*2,
+    'eval_interval_secs', 60*8,
     'The frequency with which the model is evaluated, in seconds.')
 
 tf.app.flags.DEFINE_integer(
