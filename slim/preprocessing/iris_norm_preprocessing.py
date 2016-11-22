@@ -11,6 +11,7 @@ _IMAGE_WIDTH = 256
 
 
 def preprocess_for_train(image, output_height, output_width):
+  tf.image_summary('image', tf.expand_dims(image, 0))
   image = tf.image.grayscale_to_rgb(image)
   image.set_shape([output_height, output_width, 3])
   image = tf.to_float(image)
@@ -19,6 +20,7 @@ def preprocess_for_train(image, output_height, output_width):
 
 
 def preprocess_for_eval(image, output_height, output_width):
+  tf.image_summary('image', tf.expand_dims(image, 0))
   image = tf.image.grayscale_to_rgb(image)
   image.set_shape([output_height, output_width, 3])
   image = tf.to_float(image)
