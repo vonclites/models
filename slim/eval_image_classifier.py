@@ -79,6 +79,10 @@ tf.app.flags.DEFINE_float(
     'The decay to use for the moving average.'
     'If left as None, then moving averages are not used.')
 
+tf.app.flags.DEFINE_boolean(
+    'recall', False,
+    'Whether or not to compute the Recall@5 metric.')
+
 tf.app.flags.DEFINE_integer(
     'eval_image_size', None, 'Eval image size')
 
@@ -160,9 +164,13 @@ def main(_):
     names_to_values, names_to_updates = slim.metrics.aggregate_metric_map({
         'Total_Loss': slim.metrics.streaming_mean(loss),
         'Accuracy': slim.metrics.streaming_accuracy(predictions, labels),
-        'Recall@5': slim.metrics.streaming_recall_at_k(
-            logits, labels, 5),
     })
+
+    if FLAGS.recall:
+      recall_value, recall_update = slim.metrics.streaming_recall_at_k(
+          logits, labels, 5)
+      names_to_values['Recall@5'] = recall_value
+      names_to_updates['Recall@5'] = recall_update
 
     # Print the summaries to screen.
     # TODO(vonclites) list(d.items()) is for Python 3... check compatibility

@@ -188,7 +188,7 @@ tf.app.flags.DEFINE_string(
     'as `None`, then the model_name flag is used.')
 
 tf.app.flags.DEFINE_integer(
-    'batch_size', 32, 'The number of samples in each batch.')
+    'batch_size', 64, 'The number of samples in each batch.')
 
 tf.app.flags.DEFINE_integer(
     'train_image_size', None, 'Train image size')
@@ -476,10 +476,8 @@ def main(_):
           logits, labels, label_smoothing=FLAGS.label_smoothing, weight=1.0)
       predictions = tf.argmax(logits, 1)
       labels = tf.argmax(labels, 1)
-      slim.metrics.streaming_accuracy(
-           predictions,
-           labels,
-           metrics_collections=['accuracy'])
+      accuracy= tf.reduce_mean(tf.to_float(tf.equal(predictions, labels)))
+      tf.add_to_collection('accuracy', accuracy)
       return end_points
 
     # Gather initial summaries.
