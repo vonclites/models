@@ -11,6 +11,7 @@ def common_preprocess(image, output_height, output_width):
   image = tf.image.grayscale_to_rgb(image)
   image = tf.expand_dims(image, 0)
   image = tf.image.resize_bicubic(image, [output_height, output_width])
+  tf.image_summary('image', image)
   image = tf.squeeze(image)
   image.set_shape([output_height, output_width, 3])
   return image
