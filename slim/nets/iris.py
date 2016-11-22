@@ -18,19 +18,19 @@ def vgg(inputs,
     with slim.arg_scope([slim.conv2d, slim.fully_connected, slim.max_pool2d],
                         outputs_collections=end_points_collection):
       net = slim.repeat(inputs, 2, slim.conv2d, 64, [3, 3], scope='conv1')
-      net = slim.max_pool2d(net, [1, 2], stride=[1, 2], scope='pool1')
-      # Output shape: (N, 32, 128, 64)
+      net = slim.max_pool2d(net, [2, 2], scope='pool1')
+      # Output shape: (N, 16, 128, 64)
 
       net = slim.repeat(net, 2, slim.conv2d, 128, [3, 3], scope='conv2')
       net = slim.max_pool2d(net, [2, 2], scope='pool2')
-      # Output shape: (N, 16, 64, 128)
+      # Output shape: (N, 8, 64, 128)
 
       net = slim.repeat(net, 3, slim.conv2d, 256, [3, 3], scope='conv3')
       net = slim.max_pool2d(net, [2, 2], scope='pool3')
-      # Output shape: (N, 8, 32, 256)
+      # Output shape: (N, 4, 32, 256)
 
       net = slim.repeat(net, 3, slim.conv2d, 512, [3, 3], scope='conv4')
-      net = slim.max_pool2d(net, [2, 2], scope='pool4')
+      net = slim.max_pool2d(net, [1, 2], stride=[1, 2], scope='pool4')
       # Output shape: (N, 4, 16, 512)
 
       net = slim.repeat(net, 3, slim.conv2d, 512, [3, 3], scope='conv5')

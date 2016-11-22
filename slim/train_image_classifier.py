@@ -435,27 +435,30 @@ def main(_):
     # Create a dataset provider that loads data from the dataset #
     ##############################################################
     with tf.device(deploy_config.inputs_device()):
-      provider = slim.dataset_data_provider.DatasetDataProvider(
-          dataset,
-          num_readers=FLAGS.num_readers,
-          common_queue_capacity=20 * FLAGS.batch_size,
-          common_queue_min=10 * FLAGS.batch_size)
-      [image, label] = provider.get(['image', 'label'])
-      label -= FLAGS.labels_offset
+      with tf.name_scope('inputs'):
+        provider = slim.dataset_data_provider.DatasetDataProvider(
+            dataset,
+            num_readers=FLAGS.num_readers,
+            common_queue_capacity=20 * FLAGS.batch_size,
+            common_queue_min=10 * FLAGS.batch_size)
+        [image, label] = provider.get(['image', 'label'])
+        label -= FLAGS.labels_offset
 
-      train_image_size = FLAGS.train_image_size or network_fn.default_image_size
+        train_image_size = (FLAGS.train_image_size
+                            or network_fn.default_image_size)
 
-      image = image_preprocessing_fn(image, train_image_size, train_image_size)
+        image = image_preprocessing_fn(image, train_image_size,
+                                       train_image_size)
 
-      images, labels = tf.train.batch(
-          [image, label],
-          batch_size=FLAGS.batch_size,
-          num_threads=FLAGS.num_preprocessing_threads,
-          capacity=5 * FLAGS.batch_size)
-      labels = slim.one_hot_encoding(
-          labels, dataset.num_classes - FLAGS.labels_offset)
-      batch_queue = slim.prefetch_queue.prefetch_queue(
-          [images, labels], capacity=2 * deploy_config.num_clones)
+        images, labels = tf.train.batch(
+            [image, label],
+            batch_size=FLAGS.batch_size,
+            num_threads=FLAGS.num_preprocessing_threads,
+            capacity=5 * FLAGS.batch_size)
+        labels = slim.one_hot_encoding(
+            labels, dataset.num_classes - FLAGS.labels_offset)
+        batch_queue = slim.prefetch_queue.prefetch_queue(
+            [images, labels], capacity=2 * deploy_config.num_clones)
 
     ####################
     # Define the model #
@@ -489,21 +492,22 @@ def main(_):
     # the updates for the batch_norm variables created by network_fn.
     update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS, first_clone_scope)
 
-    # Add summaries for end_points.
-    end_points = clones[0].outputs
-    for end_point in end_points:
-      x = end_points[end_point]
-      summaries.add(tf.histogram_summary('activations/' + end_point, x))
-      summaries.add(tf.scalar_summary('sparsity/' + end_point,
-                                      tf.nn.zero_fraction(x)))
+    with tf.name_scope('summaries'):
+      # Add summaries for end_points.
+      end_points = clones[0].outputs
+      for end_point in end_points:
+        x = end_points[end_point]
+        summaries.add(tf.histogram_summary('activations/' + end_point, x))
+        summaries.add(tf.scalar_summary('sparsity/' + end_point,
+                                        tf.nn.zero_fraction(x)))
 
-    # Add summaries for losses.
-    for loss in tf.get_collection(tf.GraphKeys.LOSSES, first_clone_scope):
-      summaries.add(tf.scalar_summary('losses/%s' % loss.op.name, loss))
+      # Add summaries for losses.
+      for loss in tf.get_collection(tf.GraphKeys.LOSSES, first_clone_scope):
+        summaries.add(tf.scalar_summary('losses/%s' % loss.op.name, loss))
 
-    # Add summaries for variables.
-    for variable in slim.get_model_variables():
-      summaries.add(tf.histogram_summary(variable.op.name, variable))
+      # Add summaries for variables.
+      for variable in slim.get_model_variables():
+        summaries.add(tf.histogram_summary(variable.op.name, variable))
 
     #################################
     # Configure the moving averages #
@@ -541,26 +545,27 @@ def main(_):
     # Variables to train.
     variables_to_train = _get_variables_to_train()
 
-    #  and returns a train_tensor and summary_op
-    total_loss, clones_gradients = model_deploy.optimize_clones(
-        clones,
-        optimizer,
-        var_list=variables_to_train)
-    # Add total_loss and accuacy to summary.
-    summaries.add(tf.scalar_summary('eval/Total_Loss', total_loss,
-                                    name='total_loss'))
-    accuracy = tf.get_collection('accuracy', first_clone_scope)[0]
-    summaries.add(tf.scalar_summary('eval/Accuracy', accuracy,
-                                    name='accuracy'))
+    with tf.name_scope('optimize'):
+      #  and returns a train_tensor and summary_op
+      total_loss, clones_gradients = model_deploy.optimize_clones(
+          clones,
+          optimizer,
+          var_list=variables_to_train)
 
-    # Create gradient updates.
-    grad_updates = optimizer.apply_gradients(clones_gradients,
-                                             global_step=global_step)
-    update_ops.append(grad_updates)
+      # Create gradient updates.
+      grad_updates = optimizer.apply_gradients(clones_gradients,
+                                               global_step=global_step)
+      update_ops.append(grad_updates)
 
-    update_op = tf.group(*update_ops)
-    train_tensor = control_flow_ops.with_dependencies([update_op], total_loss,
-                                                      name='train_op')
+      update_op = tf.group(*update_ops)
+      train_tensor = control_flow_ops.with_dependencies([update_op], total_loss,
+                                                        name='train_op')
+
+      summaries.add(tf.scalar_summary('eval/Total_Loss', total_loss,
+                                      name='total_loss'))
+      accuracy = tf.get_collection('accuracy', first_clone_scope)[0]
+      summaries.add(tf.scalar_summary('eval/Accuracy', accuracy,
+                                      name='accuracy'))
 
     # Add the summaries from the first clone. These contain the summaries
     # created by model_fn and either optimize_clones() or _gather_clone_loss().
