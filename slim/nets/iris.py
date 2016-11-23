@@ -30,7 +30,7 @@ def vgg(inputs,
       # Output shape: (N, 8, 64, 256)
 
       net = slim.repeat(net, 3, slim.conv2d, 512, [3, 3], scope='conv4')
-      net = slim.max_pool2d(net, [2, 2], stride=[1, 2], scope='pool4')
+      net = slim.max_pool2d(net, [2, 2], stride=[2, 2], scope='pool4')
       # Output shape: (N, 4, 32, 512)
 
       net = slim.repeat(net, 3, slim.conv2d, 512, [3, 3], scope='conv5')
