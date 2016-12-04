@@ -23,8 +23,12 @@ from datasets import cifar100
 from datasets import flowers
 from datasets import imagenet
 from datasets import mnist
-from datasets import iris_norm
-from datasets import iris_raw
+from datasets.iris import casia_livdet_tb
+from datasets.iris import casia_livdet_all
+from datasets.iris import casia
+from datasets.iris import casia_norm
+from datasets.iris import livdet
+from datasets.iris import testing
 
 datasets_map = {
     'cifar10': cifar10,
@@ -32,8 +36,12 @@ datasets_map = {
     'flowers': flowers,
     'imagenet': imagenet,
     'mnist': mnist,
-    'iris_norm': iris_norm,
-    'iris_raw': iris_raw,
+    'casia_livdet_tb': casia_livdet_tb,
+    'casia_livdet_all': casia_livdet_all,
+    'casia': casia,
+    'casia_norm': casia_norm,
+    'livdet': livdet,
+    'testing': testing,
 }
 
 
