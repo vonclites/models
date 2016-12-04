@@ -37,12 +37,12 @@ def vgg(inputs,
       net = slim.max_pool2d(net, [2, 2], scope='pool5')
       # Output shape: (N, 2, 16, 512)
 
-      net = slim.conv2d(net, 500, [2, 16], padding='VALID', scope='fc6')
+      net = slim.conv2d(net, 4096, [2, 16], padding='VALID', scope='fc6')
       net = slim.dropout(net, dropout_keep_prob, is_training=is_training,
                          scope='dropout6')
       # Output shape: (N, 1, 1, 4096)
 
-      net = slim.conv2d(net, 500, [1, 1], scope='fc7')
+      net = slim.conv2d(net, 4096, [1, 1], scope='fc7')
       net = slim.dropout(net, dropout_keep_prob, is_training=is_training,
                          scope='dropout7')
       # Output shape: (N, 1, 1, 4096)
