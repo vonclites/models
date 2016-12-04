@@ -45,10 +45,6 @@ tf.app.flags.DEFINE_string(
     'eval_dir', '/tmp/tfmodel/', 'Directory where the results are saved to.')
 
 tf.app.flags.DEFINE_integer(
-    'eval_interval_secs', 60*4,
-    'The frequency with which the model is evaluated, in seconds.')
-
-tf.app.flags.DEFINE_integer(
     'num_preprocessing_threads', 4,
     'The number of threads used to create the batches.')
 
