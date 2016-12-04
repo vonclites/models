@@ -1,3 +1,4 @@
+
 # Copyright 2016 The TensorFlow Authors. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,6 +25,7 @@ import tensorflow as tf
 from datasets import dataset_factory
 from nets import nets_factory
 from preprocessing import preprocessing_factory
+from datasets import dataset_utils
 
 slim = tf.contrib.slim
 
@@ -119,7 +121,8 @@ def main(_):
         shuffle=False,
         common_queue_capacity=2 * FLAGS.batch_size,
         common_queue_min=FLAGS.batch_size)
-    [image, label] = provider.get(['image', 'label'])
+    [image, label, coarse_label] = provider.get(
+        ['image', 'label', 'coarse_label'])
     label -= FLAGS.labels_offset
 
     #####################################
@@ -134,12 +137,14 @@ def main(_):
 
     image = image_preprocessing_fn(image, eval_image_size, eval_image_size)
 
-    images, labels = tf.train.batch(
-        [image, label],
+    images, labels, coarse_labels = tf.train.batch(
+        [image, label, coarse_label],
         batch_size=FLAGS.batch_size,
         num_threads=FLAGS.num_preprocessing_threads,
         capacity=5 * FLAGS.batch_size)
+    coarse_labels = tf.cast(coarse_labels, tf.int32)
     tf.image_summary('image', images, max_images=5)
+
     ####################
     # Define the model #
     ####################
@@ -166,6 +171,49 @@ def main(_):
         'Accuracy': slim.metrics.streaming_accuracy(predictions, labels),
     })
 
+  with tf.variable_scope('coarse_label_accuracy',
+                         values=[predictions, labels, coarse_labels]):
+    totals = tf.Variable(
+        initial_value=tf.zeros([len(dataset.coarse_labels_to_names)]),
+        trainable=False,
+        collections=[tf.GraphKeys.LOCAL_VARIABLES],
+        dtype=tf.float32,
+        name='totals')
+
+    counts = tf.Variable(
+        initial_value=tf.zeros([len(dataset.coarse_labels_to_names)]),
+        trainable=False,
+        collections=[tf.GraphKeys.LOCAL_VARIABLES],
+        dtype=tf.float32,
+        name='counts')
+
+    correct = tf.cast(tf.equal(predictions, labels), tf.int32)
+    accuracy_ops = []
+    for index, coarse_key in list(enumerate(dataset.coarse_labels_to_names)):
+      label_correct = tf.boolean_mask(correct, tf.equal(coarse_key, coarse_labels))
+      sum_correct = tf.reduce_sum(label_correct)
+      sum_correct = tf.cast(tf.expand_dims(sum_correct, 0), tf.float32)
+      delta_totals = tf.SparseTensor([[index]], sum_correct, totals.get_shape())
+      label_count = tf.cast(tf.shape(label_correct), tf.float32)
+      delta_counts = tf.SparseTensor([[index]], label_count, counts.get_shape())
+
+      totals_compute_op = tf.assign_add(
+          totals,
+          tf.sparse_tensor_to_dense(delta_totals),
+          use_locking=True)
+      counts_compute_op = tf.assign_add(
+          counts,
+          tf.sparse_tensor_to_dense(delta_counts),
+          use_locking=True)
+
+      accuracy_ops.append(totals_compute_op)
+      accuracy_ops.append(counts_compute_op)
+    with tf.control_dependencies(accuracy_ops):
+      update_op = tf.select(tf.equal(counts, 0),
+                            tf.zeros_like(counts, tf.float32),
+                            tf.div(totals, counts))
+      names_to_updates['Coarse_Label_Accuracy'] = update_op
+
     if FLAGS.recall:
       recall_value, recall_update = slim.metrics.streaming_recall_at_k(
           logits, labels, 5)
@@ -179,6 +227,11 @@ def main(_):
       op = tf.scalar_summary(summary_name, value, collections=[])
       op = tf.Print(op, [value], summary_name)
       tf.add_to_collection(tf.GraphKeys.SUMMARIES, op)
+
+    for key, label_name in dataset.coarse_labels_to_names.items():
+      summary_name = 'eval/%s' % label_name
+      tf.scalar_summary(summary_name, update_op[key],
+                        collections=[tf.GraphKeys.SUMMARIES])
 
     # TODO(sguada) use num_epochs=1
     if FLAGS.max_num_batches:
