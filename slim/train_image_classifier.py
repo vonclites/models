@@ -61,11 +61,11 @@ tf.app.flags.DEFINE_integer(
     'The frequency with which logs are print.')
 
 tf.app.flags.DEFINE_integer(
-    'save_summaries_secs', 60*10,
+    'save_summaries_secs', 60*5,
     'The frequency with which summaries are saved, in seconds.')
 
 tf.app.flags.DEFINE_integer(
-    'save_interval_secs', 60*10,
+    'save_interval_secs', 60*5,
     'The frequency with which the model is saved, in seconds.')
 
 tf.app.flags.DEFINE_integer(
@@ -161,9 +161,9 @@ tf.app.flags.DEFINE_float(
     'The decay to use for the moving average.'
     'If left as None, then moving averages are not used.')
 
-#######################
+#################
 # Dataset Flags #
-#######################
+#################
 
 tf.app.flags.DEFINE_string(
     'dataset_name', 'imagenet', 'The name of the dataset to load.')
@@ -455,9 +455,12 @@ def main(_):
             batch_size=FLAGS.batch_size,
             num_threads=FLAGS.num_preprocessing_threads,
             capacity=5 * FLAGS.batch_size)
+
         tf.image_summary('image', images, max_images=5)
+
         labels = slim.one_hot_encoding(
             labels, dataset.num_classes - FLAGS.labels_offset)
+
         batch_queue = slim.prefetch_queue.prefetch_queue(
             [images, labels], capacity=2 * deploy_config.num_clones)
 
@@ -478,10 +481,11 @@ def main(_):
             label_smoothing=FLAGS.label_smoothing, weight=0.4, scope='aux_loss')
       slim.losses.softmax_cross_entropy(
           logits, labels, label_smoothing=FLAGS.label_smoothing, weight=1.0)
-      predictions = tf.argmax(logits, 1)
-      labels = tf.argmax(labels, 1)
-      accuracy= tf.reduce_mean(tf.to_float(tf.equal(predictions, labels)))
-      tf.add_to_collection('accuracy', accuracy)
+      with tf.name_scope('accuracy'):
+        predictions = tf.argmax(logits, 1)
+        labels = tf.argmax(labels, 1)
+        accuracy = tf.reduce_mean(tf.to_float(tf.equal(predictions, labels))
+        tf.add_to_collection('accuracy', accuracy)
       return end_points
 
     # Gather initial summaries.
@@ -562,11 +566,11 @@ def main(_):
       train_tensor = control_flow_ops.with_dependencies([update_op], total_loss,
                                                         name='train_op')
 
-      summaries.add(tf.scalar_summary('eval/Total_Loss', total_loss,
-                                      name='total_loss'))
-      accuracy = tf.get_collection('accuracy', first_clone_scope)[0]
-      summaries.add(tf.scalar_summary('eval/Accuracy', accuracy,
-                                      name='accuracy'))
+    summaries.add(tf.scalar_summary('eval/Total_Loss', total_loss,
+                                    name='total_loss'))
+    accuracy = tf.get_collection('accuracy', first_clone_scope)[0]
+    summaries.add(tf.scalar_summary('eval/Accuracy', accuracy,
+                                    name='accuracy'))
 
     # Add the summaries from the first clone. These contain the summaries
     # created by model_fn and either optimize_clones() or _gather_clone_loss().
