@@ -29,6 +29,7 @@ from datasets.iris import casia
 from datasets.iris import casia_norm
 from datasets.iris import livdet
 from datasets.iris import testing
+from datasets.iris import iris_norm
 
 datasets_map = {
     'cifar10': cifar10,
@@ -42,6 +43,7 @@ datasets_map = {
     'casia_norm': casia_norm,
     'livdet': livdet,
     'testing': testing,
+    'iris_norm': iris_norm,
 }
 
 
