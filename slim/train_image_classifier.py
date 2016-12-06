@@ -484,7 +484,7 @@ def main(_):
       with tf.name_scope('accuracy'):
         predictions = tf.argmax(logits, 1)
         labels = tf.argmax(labels, 1)
-        accuracy = tf.reduce_mean(tf.to_float(tf.equal(predictions, labels))
+        accuracy = tf.reduce_mean(tf.to_float(tf.equal(predictions, labels)))
         tf.add_to_collection('accuracy', accuracy)
       return end_points
 
