@@ -29,7 +29,7 @@ from nets import overfeat
 from nets import resnet_v1
 from nets import resnet_v2
 from nets import vgg
-from nets import iris
+from nets.iris import vgg_norm
 
 slim = tf.contrib.slim
 
