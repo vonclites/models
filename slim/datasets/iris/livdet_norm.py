@@ -9,9 +9,9 @@ from datasets import dataset_utils
 
 slim = tf.contrib.slim
 
-_FILE_PATTERN = 'casia_all_%s.tfrecord'
+_FILE_PATTERN = 'livdet2015_all_%s.tfrecord'
 
-SPLITS_TO_SIZES = {'train': 16000, 'test': 4000}
+SPLITS_TO_SIZES = {'train': 4548, 'test': 1148}
 
 _NUM_CLASSES = 2
 

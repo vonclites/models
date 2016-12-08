@@ -1,4 +1,3 @@
-
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
@@ -21,6 +20,7 @@ _ITEMS_TO_DESCRIPTIONS = {
     'label': '1 for fake iris or 0 for real iris.',
 }
 
+_COARSE_LABEL_FILENAME = 'coarse_labels.txt'
 
 def get_split(split_name, dataset_dir, file_pattern=None, reader=None):
     if split_name not in SPLITS_TO_SIZES:
@@ -46,6 +46,7 @@ def get_split(split_name, dataset_dir, file_pattern=None, reader=None):
     items_to_handlers = {
         'image': slim.tfexample_decoder.Image(shape=[224, 224, 1], channels=1),
         'label': slim.tfexample_decoder.Tensor('image/class/label'),
+        'coarse_label': slim.tfexample_decoder.Tensor('image/class/coarse_label'),
         'filepath': slim.tfexample_decoder.Tensor('image/filepath'),
     }
 
@@ -56,7 +57,7 @@ def get_split(split_name, dataset_dir, file_pattern=None, reader=None):
     if dataset_utils.has_labels(dataset_dir):
       labels_to_names = dataset_utils.read_label_file(dataset_dir)
 
-    return slim.dataset.Dataset(
+    dataset = slim.dataset.Dataset(
         data_sources=file_pattern,
         reader=reader,
         decoder=decoder,
@@ -64,3 +65,11 @@ def get_split(split_name, dataset_dir, file_pattern=None, reader=None):
         items_to_descriptions=_ITEMS_TO_DESCRIPTIONS,
         num_classes=_NUM_CLASSES,
         labels_to_names=labels_to_names)
+
+    coarse_labels_to_names = None
+    if dataset_utils.has_labels(dataset_dir, _COARSE_LABEL_FILENAME):
+      coarse_labels_to_names = dataset_utils.read_label_file(
+          dataset_dir, _COARSE_LABEL_FILENAME)
+    dataset.coarse_labels_to_names = coarse_labels_to_names
+
+    return dataset
