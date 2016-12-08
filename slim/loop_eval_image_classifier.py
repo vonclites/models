@@ -47,7 +47,7 @@ tf.app.flags.DEFINE_string(
     'eval_dir', '/tmp/tfmodel/', 'Directory where the results are saved to.')
 
 tf.app.flags.DEFINE_integer(
-    'eval_interval_secs', 60*4,
+    'eval_interval_secs', 60*1,
     'The frequency with which the model is evaluated, in seconds.')
 
 tf.app.flags.DEFINE_integer(
@@ -228,9 +228,9 @@ def main(_):
       op = tf.Print(op, [value], summary_name)
       tf.add_to_collection(tf.GraphKeys.SUMMARIES, op)
 
-    for key, label_name in dataset.coarse_labels_to_names.items():
+    for index, label_name in list(enumerate(dataset.coarse_labels_to_names.values())):
       summary_name = 'eval/%s' % label_name
-      tf.scalar_summary(summary_name, update_op[key],
+      tf.scalar_summary(summary_name, update_op[index],
                         collections=[tf.GraphKeys.SUMMARIES])
 
     # TODO(sguada) use num_epochs=1
