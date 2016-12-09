@@ -11,7 +11,7 @@ slim = tf.contrib.slim
 
 _FILE_PATTERN = '%s.tfrecord'
 
-SPLITS_TO_SIZES = {'train': 0, 'test': 5148}
+SPLITS_TO_SIZES = {'train': 20548, 'test': 5148}
 
 _NUM_CLASSES = 2
 

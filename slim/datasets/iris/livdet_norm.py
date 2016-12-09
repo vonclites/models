@@ -9,7 +9,7 @@ from datasets import dataset_utils
 
 slim = tf.contrib.slim
 
-_FILE_PATTERN = 'livdet2015_all_%s.tfrecord'
+_FILE_PATTERN = 'livdet_all_%s.tfrecord'
 
 SPLITS_TO_SIZES = {'train': 4548, 'test': 1148}
 
