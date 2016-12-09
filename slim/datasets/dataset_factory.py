@@ -39,7 +39,7 @@ datasets_map = {
     'imagenet': imagenet,
     'mnist': mnist,
     'casia_livdet_tb': casia_livdet_tb,
-    'casia_livdet_all': casia_livdet_all,
+    'casia_livdet': casia_livdet_all,
     'casia': casia,
     'casia_norm': casia_norm,
     'livdet': livdet,
