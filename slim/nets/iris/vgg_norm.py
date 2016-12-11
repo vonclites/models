@@ -47,7 +47,7 @@ def vgg(inputs,
                          scope='dropout7')
       # Output shape: (N, 1, 1, 4096)
 
-      net = slim.conv2d(net, 2, [1, 1],
+      net = slim.conv2d(net, num_classes, [1, 1],
                         activation_fn=None,
                         normalizer_fn=None,
                         scope='fc8')
