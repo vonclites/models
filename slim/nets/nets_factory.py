@@ -54,7 +54,8 @@ networks_map = {'alexnet_v2': alexnet.alexnet_v2,
                 'resnet_v2_101': resnet_v2.resnet_v2_101,
                 'resnet_v2_152': resnet_v2.resnet_v2_152,
                 'resnet_v2_200': resnet_v2.resnet_v2_200,
-                'vgg_iris': vgg_norm.vgg,
+                'vgg_16_norm': vgg_norm.vgg_16,
+                'vgg_a_norm': vgg_norm.vgg_a,
                 'spoofnet': spoofnet.spoofnet_v1,
                }
 
@@ -79,7 +80,8 @@ arg_scopes_map = {'alexnet_v2': alexnet.alexnet_v2_arg_scope,
                   'resnet_v2_101': resnet_v2.resnet_arg_scope,
                   'resnet_v2_152': resnet_v2.resnet_arg_scope,
                   'resnet_v2_200': resnet_v2.resnet_arg_scope,
-                  'vgg_iris': vgg.vgg_arg_scope,
+                  'vgg_16_norm': vgg.vgg_arg_scope,
+                  'vgg_a_norm': vgg.vgg_arg_scope,
                   'spoofnet': vgg.vgg_arg_scope,
                  }
 
