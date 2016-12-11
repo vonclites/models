@@ -50,4 +50,4 @@ def spoofnet_v2(inputs,
                                  scope='fc3')
       end_points = slim.utils.convert_collection_to_dict(end_points_collection)
       return net, end_points
-spoofnet_v1.default_image_size = None
+spoofnet_v2.default_image_size = None
