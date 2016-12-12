@@ -30,7 +30,9 @@ from datasets.iris import casia_norm
 from datasets.iris import livdet
 from datasets.iris import livdet_norm
 from datasets.iris import casia_livdet_norm
+from datasets.iris import clarkson_live_printed
 from datasets.iris import clarkson_live_printed_norm
+from datasets.iris import warsaw
 from datasets.iris import warsaw_norm
 from datasets.iris import testing
 from datasets.iris import iris_norm
@@ -48,7 +50,9 @@ datasets_map = {
     'livdet': livdet,
     'livdet_norm': livdet_norm,
     'casia_livdet_norm': casia_livdet_norm,
+    'clarkson_live_printed': clarkson_live_printed,
     'clarkson_live_printed_norm': clarkson_live_printed_norm,
+    'warsaw': warsaw,
     'warsaw_norm': warsaw_norm,
     'testing': testing,
     'iris_norm': iris_norm,
