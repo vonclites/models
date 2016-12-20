@@ -26,7 +26,7 @@ def get_split(split_name, dataset_dir, file_pattern=None, reader=None):
     if split_name not in SPLITS_TO_SIZES:
       raise ValueError('split name %s was not recognized.' % split_name)
 
-    file_pattern = _FILE_PATTERN
+    file_pattern = os.path.join(dataset_dir, _FILE_PATTERN)
 
     reader = tf.TFRecordReader
 

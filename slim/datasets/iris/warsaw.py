@@ -20,13 +20,13 @@ _ITEMS_TO_DESCRIPTIONS = {
     'label': '1 for fake iris or 0 for real iris.',
 }
 
-_COARSE_LABEL_FILENAME = 'coarse_labels.txt'
+_COARSE_LABEL_FILENAME = 'warsaw_coarse_labels.txt'
 
 def get_split(split_name, dataset_dir, file_pattern=None, reader=None):
     if split_name not in SPLITS_TO_SIZES:
       raise ValueError('split name %s was not recognized.' % split_name)
 
-    file_pattern = _FILE_PATTERN
+    file_pattern = os.path.join(dataset_dir, _FILE_PATTERN)
 
     reader = tf.TFRecordReader
 

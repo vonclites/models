@@ -57,7 +57,11 @@ networks_map = {'alexnet_v2': alexnet.alexnet_v2,
                 'vgg_16_norm': vgg_norm.vgg_16,
                 'vgg_a_norm': vgg_norm.vgg_a,
                 'spoofnet_v1': spoofnet.spoofnet_v1,
-                'spoofnet_v2': spoofnet.spoofnet_v2,
+                'spoofnet_3x3': spoofnet.spoofnet_3x3,
+                'spoofnet_5': spoofnet.spoofnet_5,
+                'spoofnet_4xk': spoofnet.spoofnet_4xk,
+                'vgg_16_1': spoofnet.vgg_16_1,
+                'vgg_16_3': spoofnet.vgg_16_3,
                }
 
 arg_scopes_map = {'alexnet_v2': alexnet.alexnet_v2_arg_scope,
@@ -84,8 +88,12 @@ arg_scopes_map = {'alexnet_v2': alexnet.alexnet_v2_arg_scope,
                   'vgg_16_norm': vgg.vgg_arg_scope,
                   'vgg_a_norm': vgg.vgg_arg_scope,
                   'spoofnet_v1': vgg.vgg_arg_scope,
-                  'spoofnet_v2': vgg.vgg_arg_scope,
-                 }
+                  'spoofnet_3x3': vgg.vgg_arg_scope,
+                  'spoofnet_5': vgg.vgg_arg_scope,
+                  'spoofnet_4xk': vgg.vgg_arg_scope,
+                  'vgg_16_1': vgg.vgg_arg_scope,
+                  'vgg_16_3': vgg.vgg_arg_scope,
+                }
 
 
 def get_network_fn(name, num_classes, weight_decay=0.0, is_training=False):
@@ -107,10 +115,11 @@ def get_network_fn(name, num_classes, weight_decay=0.0, is_training=False):
   """
   if name not in networks_map:
     raise ValueError('Name of network unknown %s' % name)
-  arg_scope = arg_scopes_map[name](weight_decay=weight_decay)
+
   func = networks_map[name]
   @functools.wraps(func)
   def network_fn(images):
+    arg_scope = arg_scopes_map[name](weight_decay=weight_decay)
     with slim.arg_scope(arg_scope):
       return func(images, num_classes, is_training=is_training)
   if hasattr(func, 'default_image_size'):

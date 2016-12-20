@@ -10,7 +10,8 @@ slim = tf.contrib.slim
 def common_preprocess(image, output_height, output_width):
   image = tf.image.grayscale_to_rgb(image)
   image.set_shape([output_height, output_width, 3])
-  image = tf.to_float(image)
+  if image.dtype != tf.float32:
+      image = tf.image.convert_image_dtype(image, dtype=tf.float32)
   return image
 
 

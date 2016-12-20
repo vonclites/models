@@ -47,7 +47,7 @@ tf.app.flags.DEFINE_string(
     'eval_dir', '/tmp/tfmodel/', 'Directory where the results are saved to.')
 
 tf.app.flags.DEFINE_integer(
-    'eval_interval_secs', 60*1,
+    'eval_interval_secs', 1,
     'The frequency with which the model is evaluated, in seconds.')
 
 tf.app.flags.DEFINE_integer(
@@ -134,6 +134,8 @@ def main(_):
         is_training=False)
 
     eval_image_size = FLAGS.eval_image_size or network_fn.default_image_size
+
+#    image = tf.image.grayscale_to_rgb(image)
 
     image = image_preprocessing_fn(image, eval_image_size, eval_image_size)
 
@@ -230,8 +232,9 @@ def main(_):
 
     for index, label_name in list(enumerate(dataset.coarse_labels_to_names.values())):
       summary_name = 'eval/%s' % label_name
-      tf.scalar_summary(summary_name, update_op[index],
-                        collections=[tf.GraphKeys.SUMMARIES])
+      op = tf.scalar_summary(summary_name, update_op[index], collections=[])
+      op = tf.Print(op, [update_op[index]], summary_name)
+      tf.add_to_collection(tf.GraphKeys.SUMMARIES, op)
 
     # TODO(sguada) use num_epochs=1
     if FLAGS.max_num_batches:

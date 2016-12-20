@@ -61,11 +61,11 @@ tf.app.flags.DEFINE_integer(
     'The frequency with which logs are print.')
 
 tf.app.flags.DEFINE_integer(
-    'save_summaries_secs', 60*5,
+    'save_summaries_secs', 30,
     'The frequency with which summaries are saved, in seconds.')
 
 tf.app.flags.DEFINE_integer(
-    'save_interval_secs', 60*5,
+    'save_interval_secs', 30,
     'The frequency with which the model is saved, in seconds.')
 
 tf.app.flags.DEFINE_integer(
@@ -446,6 +446,8 @@ def main(_):
 
         train_image_size = (FLAGS.train_image_size
                             or network_fn.default_image_size)
+
+#    image = tf.image.grayscale_to_rgb(image)
 
         image = image_preprocessing_fn(image, train_image_size,
                                        train_image_size)

@@ -34,8 +34,12 @@ from datasets.iris import clarkson_live_printed
 from datasets.iris import clarkson_live_printed_norm
 from datasets.iris import warsaw
 from datasets.iris import warsaw_norm
-from datasets.iris import testing
-from datasets.iris import iris_norm
+from datasets.iris import atvs
+from datasets.iris import atvs_norm
+from datasets.iris import casia_livdet_atvs_tb
+from datasets.iris import casia_livdet_atvs_tb_norm
+from datasets.iris import atvs_clarkson_live_printed
+from datasets.iris import craziness
 
 datasets_map = {
     'cifar10': cifar10,
@@ -52,10 +56,16 @@ datasets_map = {
     'casia_livdet_norm': casia_livdet_norm,
     'clarkson_live_printed': clarkson_live_printed,
     'clarkson_live_printed_norm': clarkson_live_printed_norm,
+    'atvs_clarkson_live_printed': atvs_clarkson_live_printed,
     'warsaw': warsaw,
     'warsaw_norm': warsaw_norm,
-    'testing': testing,
-    'iris_norm': iris_norm,
+    'atvs': atvs,
+    'atvs_norm': atvs_norm,
+    'craziness': craziness,
+    'iris_all': casia_livdet_atvs_tb,
+    'iris_all_norm': casia_livdet_atvs_tb_norm,
+#    'testing': testing,
+#    'iris_norm': iris_norm,
 }
 
 

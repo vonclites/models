@@ -26,6 +26,7 @@ from preprocessing import lenet_preprocessing
 from preprocessing import vgg_preprocessing
 from preprocessing import iris_norm_preprocessing
 from preprocessing import iris_raw_preprocessing
+from preprocessing import iris_raw_aug_preprocessing
 
 slim = tf.contrib.slim
 
@@ -64,6 +65,7 @@ def get_preprocessing(name, is_training=False):
       'vgg_19': vgg_preprocessing,
       'vgg_iris_norm': iris_norm_preprocessing,
       'vgg_iris_raw': iris_raw_preprocessing,
+      'vgg_iris_raw_aug': iris_raw_aug_preprocessing,
   }
 
   if name not in preprocessing_fn_map:
