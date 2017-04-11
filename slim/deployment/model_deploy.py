@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ==============================================================================
-"""Deploy Slim models across multiple clones and replicas.
+"""Deploy Slim networks across multiple clones and replicas.
 
 # TODO(sguada) docstring paragraph by (a) motivating the need for the file and
 # (b) defining clones.
