@@ -26,7 +26,7 @@ Other variants were introduced in:
 The networks defined in this module utilize the bottleneck building block of
 [1] with projection shortcuts only for increasing depths. They employ batch
 normalization *after* every weight layer. This is the architecture used by
-MSRA in the Imagenet and MSCOCO 2016 competition models ResNet-101 and
+MSRA in the Imagenet and MSCOCO 2016 competition networks ResNet-101 and
 ResNet-152. See [2; Fig. 1a] for a comparison between the current 'v1'
 architecture and the alternative 'v2' architecture of [2] which uses batch
 normalization *before* every weight layer in the so-called full pre-activation
@@ -121,9 +121,9 @@ def resnet_v1(inputs,
               include_root_block=True,
               reuse=None,
               scope=None):
-  """Generator for v1 ResNet models.
+  """Generator for v1 ResNet networks.
 
-  This function generates a family of ResNet v1 models. See the resnet_v1_*()
+  This function generates a family of ResNet v1 networks. See the resnet_v1_*()
   methods for specific model instantiations, obtained by selecting different
   block instantiations that produce ResNets of various depths.
 

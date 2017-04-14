@@ -213,7 +213,7 @@ def resnet_arg_scope(weight_decay=0.0001,
   """Defines the default ResNet arg scope.
 
   TODO(gpapan): The batch-normalization related default values above are
-    appropriate for use in conjunction with the reference ResNet models
+    appropriate for use in conjunction with the reference ResNet networks
     released at https://github.com/KaimingHe/deep-residual-networks. When
     training ResNets from scratch, they might need to be tuned.
 
@@ -227,7 +227,7 @@ def resnet_arg_scope(weight_decay=0.0001,
       activations in the batch normalization layer.
 
   Returns:
-    An `arg_scope` to use for the resnet models.
+    An `arg_scope` to use for the resnet networks.
   """
   batch_norm_params = {
       'decay': batch_norm_decay,

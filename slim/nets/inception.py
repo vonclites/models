@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ==============================================================================
-"""Brings all inception models under one namespace."""
+"""Brings all inception networks under one namespace."""
 
 from __future__ import absolute_import
 from __future__ import division

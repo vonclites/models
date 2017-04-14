@@ -119,9 +119,9 @@ def resnet_v2(inputs,
               include_root_block=True,
               reuse=None,
               scope=None):
-  """Generator for v2 (preactivation) ResNet models.
+  """Generator for v2 (preactivation) ResNet networks.
 
-  This function generates a family of ResNet v2 models. See the resnet_v2_*()
+  This function generates a family of ResNet v2 networks. See the resnet_v2_*()
   methods for specific model instantiations, obtained by selecting different
   block instantiations that produce ResNets of various depths.
 
